@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct ContentView: View {
-    // MARK: - State Variables
+    
     @State private var username = ""
     @State private var password = ""
     @State private var wrongUsername = false
@@ -10,7 +10,7 @@ struct ContentView: View {
     @State private var showErrorAlert = false
     @State private var errorMessage = ""
     
-    // MARK: - Constants
+    
     private let fieldWidth: CGFloat = 300
     private let fieldHeight: CGFloat = 50
     private let cornerRadius: CGFloat = 10
@@ -25,7 +25,7 @@ struct ContentView: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                // MARK: - Background
+                
                 LinearGradient(
                     gradient: Gradient(colors: [primaryColor, primaryColor.opacity(0.8)]),
                     startPoint: .topLeading,
@@ -33,7 +33,7 @@ struct ContentView: View {
                 )
                 .ignoresSafeArea(.all)
                 
-                // MARK: - Decorative Circles
+                
                 Circle()
                     .scale(1.7)
                     .foregroundColor(.blue.opacity(0.15))
@@ -46,16 +46,15 @@ struct ContentView: View {
                     .scale(1)
                     .foregroundColor(.white)
                 
-                // MARK: - Main Content
+        
                 VStack(spacing: verticalPadding) {
-                    // MARK: - Title
+                    
                     Text("Login")
                         .font(.largeTitle)
                         .fontWeight(.bold)
                         .foregroundColor(.white)
                         .padding(.bottom, 8)
                     
-                    // MARK: - Username Field
                     VStack(alignment: .leading, spacing: 8) {
                         Label("Username", systemImage: "person.fill")
                             .foregroundColor(.white.opacity(0.8))
@@ -69,7 +68,7 @@ struct ContentView: View {
                     }
                     .frame(width: fieldWidth, height: fieldHeight)
                     
-                    // MARK: - Password Field
+                    
                     VStack(alignment: .leading, spacing: 8) {
                         Label("Password", systemImage: "lock.fill")
                             .foregroundColor(.white.opacity(0.8))
@@ -83,7 +82,7 @@ struct ContentView: View {
                     }
                     .frame(width: fieldWidth, height: fieldHeight)
                     
-                    // MARK: - Error Messages
+                    
                     if wrongUsername || wrongPassword {
                         VStack(alignment: .leading, spacing: 4) {
                             if wrongUsername {
@@ -132,13 +131,13 @@ struct ContentView: View {
         }
     }
     
-    // MARK: - Authentication Logic
+    
     private func authenticate() {
         withAnimation {
             wrongUsername = false
             wrongPassword = false
             
-            // Validate credentials
+            
             if username.lowercased() != validUsername {
                 wrongUsername = true
             }
@@ -147,7 +146,7 @@ struct ContentView: View {
                 wrongPassword = true
             }
             
-            // If both credentials are correct, navigate
+            
             if !wrongUsername && !wrongPassword {
                 isLoggedIn = true
             }
@@ -155,7 +154,7 @@ struct ContentView: View {
     }
 }
 
-// MARK: - Custom TextFieldStyle
+
 struct CustomTextFieldStyle: TextFieldStyle {
     var isInvalid: Bool
     
@@ -174,7 +173,7 @@ struct CustomTextFieldStyle: TextFieldStyle {
     }
 }
 
-// MARK: - Secure View (Placeholder)
+
 struct SecureView: View {
     @Binding var isLoggedIn: Bool
     
