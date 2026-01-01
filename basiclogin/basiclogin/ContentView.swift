@@ -242,7 +242,7 @@ struct SecureView: View {
                         .foregroundColor(.black)
                     
                     Text("You have successfully logged in")
-                        .font(.system(size: 16, weight: .regular, design: .default))
+                        .font(.system(size: 14, weight: .regular, design: .default))
                        1
                         .foregroundColor(.gray)
                         .multilineTextAlignment(.center)
