@@ -106,7 +106,7 @@ struct ContentView: View {
                         .transition(.scale.combined(with: .opacity))
                     }
                     
-                    // MARK: - Login Button
+                    
                     Button(action: authenticate) {
                         Text("Sign In")
                             .font(.headline)
@@ -157,7 +157,9 @@ struct ContentView: View {
 
 struct CustomTextFieldStyle: TextFieldStyle {
     var isInvalid: Bool
-    
+    func_body(configuration): TextField<self.Label>) -> some View {
+
+    }
     func _body(configuration: TextField<Self.Label>) -> some View {
         configuration
             .padding(12)
