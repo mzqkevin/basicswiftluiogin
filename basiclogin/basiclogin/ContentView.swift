@@ -1,219 +1,269 @@
 import SwiftUI
 
 struct ContentView: View {
-    
     @State private var username = ""
     @State private var password = ""
     @State private var wrongUsername = false
     @State private var wrongPassword = false
+    @State private var showPassword = false
+    @State private var isLoggingIn = false
     @State private var isLoggedIn = false
-    @State private var showErrorAlert = false
-    @State private var errorMessage = ""
     
-    
-    private let fieldWidth: CGFloat = 300
-    private let fieldHeight: CGFloat = 50
-    private let cornerRadius: CGFloat = 10
-    private let validUsername = "kevin"
-    private let validPassword = "1234"
-    private let primaryColor = Color.green
-    private let accentColor = Color.blue
-    private let errorColor = Color.red
-    private let fieldSpacing: CGFloat = 16
-    private let verticalPadding: CGFloat = 20
+    let verticalPadding: CGFloat = 16
+    let horizontalPadding: CGFloat = 24
+    let errorColor = Color(red: 1.0, green: 0.4, blue: 0.3)
+    let successColor = Color(red: 0.2, green: 0.8, blue: 0.4)
     
     var body: some View {
         NavigationStack {
             ZStack {
-                
+                // Gradient Background
                 LinearGradient(
-                    gradient: Gradient(colors: [primaryColor, primaryColor.opacity(0.8)]),
+                    gradient: Gradient(colors: [
+                        Color(red: 0.95, green: 0.97, blue: 1.0),
+                        Color(red: 0.90, green: 0.95, blue: 1.0)
+                    ]),
                     startPoint: .topLeading,
                     endPoint: .bottomTrailing
                 )
-                .ignoresSafeArea(.all)
+                .ignoresSafeArea()
                 
-                
-                Circle()
-                    .scale(1.7)
-                    .foregroundColor(.blue.opacity(0.15))
-                
-                Circle()
-                    .scale(1.35)
-                    .foregroundColor(.white.opacity(0.5))
-                
-                Circle()
-                    .scale(1)
-                    .foregroundColor(.white)
-                
-        
-                VStack(spacing: verticalPadding) {
-                    
-                    Text("Login")
-                        .font(.largeTitle)
-                        .fontWeight(.bold)
-                        .foregroundColor(.white)
-                        .padding(.bottom, 8)
-                    
+                VStack(alignment: .leading, spacing: verticalPadding) {
+                    // Header
                     VStack(alignment: .leading, spacing: 8) {
-                        Label("Username", systemImage: "person.fill")
-                            .foregroundColor(.white.opacity(0.8))
-                            .font(.caption)
-                            .fontWeight(.semibold)
+                        Text("Welcome Back")
+                            .font(.system(size: 32, weight: .bold, design: .default))
+                            .foregroundColor(.black)
                         
-                        TextField("Enter username", text: $username)
-                            .textFieldStyle(CustomTextFieldStyle(
-                                isInvalid: wrongUsername
-                            ))
+                        Text("Sign in to your account")
+                            .font(.system(size: 16, weight: .regular, design: .default))
+                            .foregroundColor(.gray)
                     }
-                    .frame(width: fieldWidth, height: fieldHeight)
+                    .padding(.vertical, 20)
                     
-                    
-                    VStack(alignment: .leading, spacing: 8) {
-                        Label("Password", systemImage: "lock.fill")
-                            .foregroundColor(.white.opacity(0.8))
-                            .font(.caption)
-                            .fontWeight(.semibold)
-                        
-                        SecureField("Enter password", text: $password)
-                            .textFieldStyle(CustomTextFieldStyle(
-                                isInvalid: wrongPassword
-                            ))
-                    }
-                    .frame(width: fieldWidth, height: fieldHeight)
-                    
-                    
-                    if wrongUsername || wrongPassword {
-                        VStack(alignment: .leading, spacing: 4) {
+                    VStack(alignment: .leading, spacing: verticalPadding) {
+                        // Username Field
+                        VStack(alignment: .leading, spacing: 8) {
+                            Label("Username", systemImage: "person.fill")
+                                .font(.system(size: 14, weight: .semibold, design: .default))
+                                .foregroundColor(.black)
+                            
+                            TextField("Enter your username", text: $username)
+                                .textFieldStyle(
+                                    CustomTextFieldStyle(
+                                        isInvalid: wrongUsername,
+                                        backgroundColor: Color.white.opacity(0.8)
+                                    )
+                                )
+                            
                             if wrongUsername {
-                                HStack(spacing: 8) {
-                                    Image(systemName: "exclamationmark.circle.fill")
-                                    Text("Invalid username")
-                                }
-                            }
-                            if wrongPassword {
-                                HStack(spacing: 8) {
-                                    Image(systemName: "exclamationmark.circle.fill")
-                                    Text("Invalid password")
-                                }
+                                Label("Invalid username", systemImage: "exclamationmark.circle.fill")
+                                    .font(.system(size: 12, weight: .regular, design: .default))
+                                    .foregroundColor(errorColor)
+                                    .transition(.opacity.combined(with: .scale))
                             }
                         }
-                        .font(.caption)
-                        .foregroundColor(errorColor)
-                        .padding(8)
-                        .background(errorColor.opacity(0.1))
-                        .cornerRadius(6)
-                        .transition(.scale.combined(with: .opacity))
+                        
+                        // Password Field
+                        VStack(alignment: .leading, spacing: 8) {
+                            HStack {
+                                Label("Password", systemImage: "lock.fill")
+                                    .font(.system(size: 14, weight: .semibold, design: .default))
+                                    .foregroundColor(.black)
+                                
+                                Spacer()
+                                
+                                Button(action: { showPassword.toggle() }) {
+                                    Image(systemName: showPassword ? "eye.slash.fill" : "eye.fill")
+                                        .foregroundColor(.gray)
+                                }
+                            }
+                            
+                            if showPassword {
+                                TextField("Enter password", text: $password)
+                                    .textFieldStyle(
+                                        CustomTextFieldStyle(
+                                            isInvalid: wrongPassword,
+                                            backgroundColor: Color.white.opacity(0.8)
+                                        )
+                                    )
+                                    .transition(.opacity.combined(with: .move(edge: .top)))
+                            } else {
+                                SecureField("Enter password", text: $password)
+                                    .textFieldStyle(
+                                        CustomTextFieldStyle(
+                                            isInvalid: wrongPassword,
+                                            backgroundColor: Color.white.opacity(0.8)
+                                        )
+                                    )
+                                    .transition(.opacity.combined(with: .move(edge: .top)))
+                            }
+                            
+                            if wrongPassword {
+                                Label("Invalid password", systemImage: "exclamationmark.circle.fill")
+                                    .font(.system(size: 12, weight: .regular, design: .default))
+                                    .foregroundColor(errorColor)
+                                    .transition(.opacity.combined(with: .scale))
+                            }
+                        }
                     }
-                    
-                    
-                    Button(action: authenticate) {
-                        Text("Sign In")
-                            .font(.headline)
-                            .fontWeight(.semibold)
-                            .foregroundColor(.white)
-                            .frame(maxWidth: .infinity)
-                            .frame(height: 50)
-                            .background(accentColor)
-                            .cornerRadius(cornerRadius)
-                            .shadow(color: accentColor.opacity(0.4), radius: 4, x: 0, y: 2)
-                    }
-                    .frame(width: fieldWidth)
-                    .padding(.top, 8)
+                    .frame(maxWidth: .infinity, alignment: .leading)
                     
                     Spacer()
+                        .frame(height: 8)
+                    
+                    // Login Button
+                    Button(action: authenticate) {
+                        if isLoggingIn {
+                            HStack(spacing: 8) {
+                                ProgressView()
+                                    .tint(.white)
+                                Text("Signing in...")
+                                    .font(.system(size: 16, weight: .semibold, design: .default))
+                            }
+                        } else {
+                            Text("Sign In")
+                                .font(.system(size: 16, weight: .semibold, design: .default))
+                        }
+                    }
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 50)
+                    .background(
+                        LinearGradient(
+                            gradient: Gradient(colors: [
+                                Color(red: 0.2, green: 0.5, blue: 1.0),
+                                Color(red: 0.1, green: 0.4, blue: 0.9)
+                            ]),
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        )
+                    )
+                    .foregroundColor(.white)
+                    .cornerRadius(12)
+                    .shadow(color: Color(red: 0.2, green: 0.5, blue: 1.0).opacity(0.3), radius: 8, x: 0, y: 4)
+                    .disabled(isLoggingIn)
+                    .opacity(isLoggingIn ? 0.8 : 1.0)
+                    .animation(.easeInOut(duration: 0.3), value: isLoggingIn)
+                    
+                    NavigationLink(destination: SecureView(), isActive: $isLoggedIn) {
+                        EmptyView()
+                    }
                 }
-                .padding(.vertical, 32)
-            }
-            .navigationDestination(isPresented: $isLoggedIn) {
-                SecureView(isLoggedIn: $isLoggedIn)
+                .padding(.horizontal, horizontalPadding)
+                .padding(.vertical, 40)
             }
         }
     }
     
-    
     private func authenticate() {
         withAnimation {
+            isLoggingIn = true
             wrongUsername = false
             wrongPassword = false
-            
-            
-            if username.lowercased() != validUsername {
-                wrongUsername = true
-            }
-            
-            if password != validPassword {
-                wrongPassword = true
-            }
-            
-            
-            if !wrongUsername && !wrongPassword {
-                isLoggedIn = true
+        }
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+            withAnimation {
+                if username.isEmpty {
+                    wrongUsername = true
+                }
+                if password.isEmpty {
+                    wrongPassword = true
+                }
+                
+                if !wrongUsername && !wrongPassword {
+                    isLoggedIn = true
+                }
+                
+                isLoggingIn = false
             }
         }
     }
 }
 
-
 struct CustomTextFieldStyle: TextFieldStyle {
-    var isInvalid: Bool
-    func_body(configuration): TextField<self.Label>) -> some View {
-
-    }
-    func _body(configuration: TextField<Self.Label>) -> some View {
+    let isInvalid: Bool
+    let backgroundColor: Color
+    
+    func _body(configuration: TextField<Self._Label>) -> some View {
         configuration
-            .padding(12)
-            .background(Color.white)
+            .padding(.vertical, 12)
+            .padding(.horizontal, 14)
+            .background(backgroundColor)
             .cornerRadius(10)
             .overlay(
                 RoundedRectangle(cornerRadius: 10)
                     .stroke(
-                        isInvalid ? Color.red : Color.clear,
+                        isInvalid ? Color(red: 1.0, green: 0.4, blue: 0.3) : Color.clear,
                         lineWidth: 2
                     )
             )
+            .font(.system(size: 15, weight: .regular, design: .default))
     }
 }
 
-
 struct SecureView: View {
-    @Binding var isLoggedIn: Bool
+    @Environment(\.presentationMode) var presentationMode
     
     var body: some View {
         ZStack {
-            Color.green.opacity(0.1).ignoresSafeArea()
+            LinearGradient(
+                gradient: Gradient(colors: [
+                    Color(red: 0.95, green: 0.97, blue: 1.0),
+                    Color(red: 0.90, green: 0.95, blue: 1.0)
+                ]),
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
+            )
+            .ignoresSafeArea()
             
             VStack(spacing: 24) {
                 HStack {
-                    Button(action: { isLoggedIn = false }) {
+                    Button(action: { presentationMode.wrappedValue.dismiss() }) {
                         HStack(spacing: 6) {
                             Image(systemName: "chevron.left")
+                                .font(.system(size: 14, weight: .semibold, design: .default))
                             Text("Back")
+                                .font(.system(size: 16, weight: .regular, design: .default))
                         }
-                        .foregroundColor(.blue)
+                        .foregroundColor(Color(red: 0.2, green: 0.5, blue: 1.0))
                     }
                     Spacer()
                 }
-                .padding()
+                .padding(.bottom, 20)
                 
                 VStack(spacing: 16) {
                     Image(systemName: "checkmark.circle.fill")
                         .font(.system(size: 60))
-                        .foregroundColor(.green)
+                        .foregroundColor(Color(red: 0.2, green: 0.8, blue: 0.4))
                     
                     Text("Welcome!")
-                        .font(.title)
-                        .fontWeight(.bold)
+                        .font(.system(size: 28, weight: .bold, design: .default))
+                        .foregroundColor(.black)
                     
                     Text("You have successfully logged in")
-                        .font(.body)
+                        .font(.system(size: 16, weight: .regular, design: .default))
+                       1
                         .foregroundColor(.gray)
                         .multilineTextAlignment(.center)
                 }
                 
                 Spacer()
+                
+                VStack(spacing: 12) {
+                    Button(action: { presentationMode.wrappedValue.dismiss() }) {
+                        Text("Logout")
+                            .font(.system(size: 16, weight: .semibold, design: .default))
+                            .frame(maxWidth: .infinity)
+                            .frame(height: 50)
+                            .background(Color(red: 1.0, green: 0.4, blue: 0.3))
+                            .foregroundColor(.white)
+                            .cornerRadius(12)
+                    }
+                }
+                .padding(.vertical, 20)
             }
-            .padding()
+            .padding(24)
         }
     }
 }
